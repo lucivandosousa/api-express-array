@@ -1,5 +1,9 @@
 // Importando o módulo express, que é um framework para construção de aplicações web em Node.js.
 const express = require("express")
+// Importando o módulo swagger-jsdoc que lê o código e gera a especificação.
+const swaggerJSDoc = require('swagger-jsdoc')
+// Importando o módulo swagger-ui-express.
+const swaggerUi = require('swagger-ui-express')
 
 // Criando uma instância da aplicação Express.
 const app = express()
@@ -10,6 +14,31 @@ app.use(express.json())
 // Definindo a porta em que a aplicação vai rodar.
 const port = process.env.PORT || 3000
 
+// Configuração do Swagger
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Exemplo de API CRUD com Express',
+    version: '1.0.0',
+    description: 'Documentação da API CRUD com Express e persistência em um Array de dados',
+  },
+  servers: [
+    {
+      url: `http://localhost:${port}`,
+      description: 'Servidor local',
+    },
+  ],
+}
+
+const options = {
+  swaggerDefinition,
+  apis: ['app.js'],
+}
+
+const swaggerSpec = swaggerJSDoc(options)
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
 // Array de produtos como exemplo de uma "base de dados".
 let produtos = [
   {id: 1, descricao: "Produto 1"},
@@ -18,9 +47,27 @@ let produtos = [
 ]
 
 // Endpoint inicial para verificar se a API está funcionando.
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Endpoint inicial para verificar se a API está funcionando
+ *     responses:
+ *       201:
+ *         description: OK
+ */
 app.get("/", (req, res) => res.status(200).send("API express"))
 
 // Endpoint para adicionar um novo produto.
+/**
+ * @swagger
+ * /produtos:
+ *   post:
+ *     summary: Insere um produto
+ *     responses:
+ *       201:
+ *         description: OK
+ */
 app.post("/produtos", (req, res) => {
   const dataToInsert = req.body
   produtos.push(dataToInsert)
@@ -28,11 +75,29 @@ app.post("/produtos", (req, res) => {
 })
 
 // Endpoint para listar todos os produtos.
+/**
+ * @swagger
+ * /produtos:
+ *   get:
+ *     summary: Retorna todos os produtos
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 app.get("/produtos", (req, res) => {
   res.status(200).json(produtos)
 })
 
 // Endpoint para listar um produto com base no ID.
+/**
+ * @swagger
+ * /produtos/:id:
+ *   get:
+ *     summary: Retorna um produto pelo ID
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 app.get("/produtos/:id", (req, res) => {
   const {id} = req.params
   const produto = produtos.filter(item => item.id == id)
@@ -40,6 +105,15 @@ app.get("/produtos/:id", (req, res) => {
 })
 
 // Endpoint para atualizar um produto com base no ID.
+/**
+ * @swagger
+ * /produtos/:id:
+ *   put:
+ *     summary: Atualiza um produto pelo ID
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 app.put("/produtos/:id", (req, res) => {
   const {id} = req.params
   const dataToUpdate = req.body
@@ -49,6 +123,15 @@ app.put("/produtos/:id", (req, res) => {
 })
 
 // Endpoint para excluir um produto com base no ID.
+/**
+ * @swagger
+ * /produtos/:id:
+ *   delete:
+ *     summary: Exclui um produto pelo ID
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 app.delete("/produtos/:id", (req, res) => {
   const {id} = req.params
   const index = produtos.findIndex(item => item.id == id)
