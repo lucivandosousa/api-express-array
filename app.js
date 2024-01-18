@@ -136,9 +136,16 @@ app.put("/produtos/:id", (req, res) => {
 // Endpoint para excluir um produto com base no ID.
 /**
  * @swagger
- * /produtos/:id:
+ * /produtos/{id}:
  *   delete:
  *     summary: Exclui um produto pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do item
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: OK
@@ -146,6 +153,10 @@ app.put("/produtos/:id", (req, res) => {
 app.delete("/produtos/:id", (req, res) => {
   const {id} = req.params
   const index = produtos.findIndex(item => item.id == id)
+  if(index < 0) {
+    res.status(404).send("Produto não localizado.")
+    return
+  }
   produtos.splice(index, 1)
   res.status(200).send("Produto excluído.")
 })
