@@ -82,6 +82,10 @@ app.get("/", (req, res) => res.status(200).send("API express"))
  */
 app.post("/produtos", (req, res) => {
   const dataToInsert = req.body
+  if (!dataToInsert.id || !dataToInsert.descricao) {
+    res.status(206).send("ID ou descricão do produto não foi informado(a).")
+    return
+  }
   produtos.push(dataToInsert)
   res.status(201).send("Produto adicionado.")
 })
