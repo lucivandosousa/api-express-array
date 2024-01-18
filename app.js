@@ -64,6 +64,18 @@ app.get("/", (req, res) => res.status(200).send("API express"))
  * /produtos:
  *   post:
  *     summary: Insere um produto
+ *     requestBody:
+ *       description: Dados a serem inseridos
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: interger
+ *               descricao:
+ *                 type: string
  *     responses:
  *       201:
  *         description: OK
@@ -121,6 +133,23 @@ app.get("/produtos/:id", (req, res) => {
  * /produtos/{id}:
  *   put:
  *     summary: Atualiza um produto pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do item
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       description: Dados a serem atualizados no produto
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               descricao:
+ *                 type: string
  *     responses:
  *       200:
  *         description: OK
@@ -129,6 +158,10 @@ app.put("/produtos/:id", (req, res) => {
   const {id} = req.params
   const dataToUpdate = req.body
   const index = produtos.findIndex(item => item.id == id)
+  if (index < 0) {
+    res.status(404).send("Produto não localizado.")
+    return
+  }
   produtos[index] = {...produtos[index], ...dataToUpdate}
   res.status(200).send("Produto atualizado.")
 })
