@@ -4,12 +4,16 @@ const express = require("express")
 const swaggerJSDoc = require("swagger-jsdoc")
 // Importando o módulo swagger-ui-express.
 const swaggerUi = require("swagger-ui-express")
+// Importando o módulo cors
+const cors = require("cors")
 
 // Criando uma instância da aplicação Express.
 const app = express()
 
 // Middleware para permitir que a aplicação interprete JSON nas requisições.
 app.use(express.json())
+//
+app.use(cors())
 
 // Definindo a porta em que a aplicação vai rodar.
 const port = process.env.PORT || 3000
