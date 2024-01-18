@@ -28,7 +28,7 @@ git clone https://github.com/lucivandosousa/api-express-array.git
 Para iniciar a API, execute o seguinte comando:
 
 ```
-npm prod
+npm run prod
 ```
 A API será executada na porta 3000 por padrão, ou na porta especificada pela variável de ambiente PORT.
 
