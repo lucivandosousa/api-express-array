@@ -1,9 +1,9 @@
 // Importando o módulo express, que é um framework para construção de aplicações web em Node.js.
 const express = require("express")
 // Importando o módulo swagger-jsdoc que lê o código e gera a especificação.
-const swaggerJSDoc = require('swagger-jsdoc')
+const swaggerJSDoc = require("swagger-jsdoc")
 // Importando o módulo swagger-ui-express.
-const swaggerUi = require('swagger-ui-express')
+const swaggerUi = require("swagger-ui-express")
 
 // Criando uma instância da aplicação Express.
 const app = express()
@@ -91,23 +91,34 @@ app.get("/produtos", (req, res) => {
 // Endpoint para listar um produto com base no ID.
 /**
  * @swagger
- * /produtos/:id:
+ * /produtos/{id}:
  *   get:
  *     summary: Retorna um produto pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do item
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: OK
  */
 app.get("/produtos/:id", (req, res) => {
   const {id} = req.params
-  const produto = produtos.filter(item => item.id == id)
+  const [produto] = produtos.filter(item => item.id == id)
+  if (!produto) {
+    res.status(404).send("Produto não localizado.")
+    return
+  }
   res.status(200).json(produto)
 })
 
 // Endpoint para atualizar um produto com base no ID.
 /**
  * @swagger
- * /produtos/:id:
+ * /produtos/{id}:
  *   put:
  *     summary: Atualiza um produto pelo ID
  *     responses:
