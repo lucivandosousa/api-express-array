@@ -46,6 +46,8 @@ A API será executada na porta 3000 por padrão, ou na porta especificada pela v
 
  - DELETE "/produtos/:id" Exclui um produto específico com base no ID fornecido.
 
+ - GET "/produtos/api-docs" Exibe a interface gráfica do Swagger UI.
+
 ### 3. Exemplo de Uso
 
 Para adicionar um novo produto, você pode enviar uma requisição POST com os detalhes do produto no corpo da requisição:
