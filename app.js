@@ -6,6 +6,8 @@ const swaggerJSDoc = require("swagger-jsdoc")
 const swaggerUi = require("swagger-ui-express")
 // Importando o módulo cors
 const cors = require("cors")
+//Pegar diretorio dos arquivos do sistema OS
+const path = require('path');
 
 // Criando uma instância da aplicação Express.
 const app = express()
@@ -14,6 +16,10 @@ const app = express()
 app.use(express.json())
 //
 app.use(cors())
+
+
+//Adicionando os meu arquivos publicos 
+app.use(express.static(path.join(__dirname, '/public')));
 
 // Definindo a porta em que a aplicação vai rodar.
 const port = process.env.PORT || 3000
@@ -46,6 +52,10 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
+app.get("/versao-valid",(req, res) =>{
+  res.sendFile(__dirname + "/public/index.html")
+} )
 
 // Array de produtos como exemplo de uma "base de dados".
 let produtos = [

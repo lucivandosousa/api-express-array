@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Api carrinho de compra</title>
+</head>
+
+<body>
+    <h1>1.0.0</h1>
+
+
+    <script>
+        const options = {method: 'GET', headers: {'User-Agent': 'insomnia/8.5.1'}};
+
+        fetch('http://localhost:3000/produtos', options)
+            .then(response => response.json())
+            .then(response => console.log(response))
+            .catch(err => console.error(err));
+    </script>
+</body>
+
+</html>
