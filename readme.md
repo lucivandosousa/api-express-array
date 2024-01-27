@@ -70,10 +70,7 @@ Ele cria a entidade migration e modelo
 npx sequelize-cli model:generate --name Produto --attributes nome:string,preco:float
 
 ```
-
 Execulta todas as pendencias
-
 ```
 npx sequelize-cli db:migrate
-
 ```

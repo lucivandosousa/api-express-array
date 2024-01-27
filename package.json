@@ -6,6 +6,7 @@
   "scripts": {
     "prod": "node app.js",
     "dev": "nodemon app.js",
+    "dev-mg": "npx sequelize-cli db:migrate && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

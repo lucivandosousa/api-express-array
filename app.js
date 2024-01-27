@@ -14,9 +14,11 @@ const app = express()
 
 // Middleware para permitir que a aplicação interprete JSON nas requisições.
 app.use(express.json())
-//
+// Add Cors 
 app.use(cors())
 
+// Rotas
+const produtosRouter = require("./routes/produtos")
 
 //Adicionando os meu arquivos publicos 
 app.use(express.static(path.join(__dirname, '/public')));
@@ -33,6 +35,7 @@ const swaggerDefinition = {
     description: 'Documentação da API CRUD com Express e persistência em um Array de dados',
   },
   servers: [
+    //TODO:: Mudar par o seu projeto
     {
       url: `https://api-express-array.vercel.app`,
       description: 'Servidor de produção',
@@ -57,13 +60,6 @@ app.get("/versao-valid",(req, res) =>{
   res.sendFile(__dirname + "/public/index.html")
 } )
 
-// Array de produtos como exemplo de uma "base de dados".
-let produtos = [
-  {id: 1, descricao: "Produto 1"},
-  {id: 2, descricao: "Produto 2"},
-  {id: 3, descricao: "Produto 3"}
-]
-
 // Endpoint inicial para verificar se a API está funcionando.
 /**
  * @swagger
@@ -76,145 +72,9 @@ let produtos = [
  */
 app.get("/", (req, res) => res.status(200).send("API express"))
 
-// Endpoint para adicionar um novo produto.
-/**
- * @swagger
- * /produtos:
- *   post:
- *     summary: Insere um produto
- *     requestBody:
- *       description: Dados a serem inseridos
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: interger
- *               descricao:
- *                 type: string
- *     responses:
- *       201:
- *         description: OK
- */
-app.post("/produtos", (req, res) => {
-  const dataToInsert = req.body
-  if (!dataToInsert.id || !dataToInsert.descricao) {
-    res.status(206).send("ID ou descricão do produto não foi informado(a).")
-    return
-  }
-  produtos.push(dataToInsert)
-  res.status(201).send("Produto adicionado.")
-})
 
-// Endpoint para listar todos os produtos.
-/**
- * @swagger
- * /produtos:
- *   get:
- *     summary: Retorna todos os produtos
- *     responses:
- *       200:
- *         description: OK
- */
-app.get("/produtos", (req, res) => {
-  res.status(200).json(produtos)
-})
-
-// Endpoint para listar um produto com base no ID.
-/**
- * @swagger
- * /produtos/{id}:
- *   get:
- *     summary: Retorna um produto pelo ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID do item
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: OK
- */
-app.get("/produtos/:id", (req, res) => {
-  const {id} = req.params
-  const [produto] = produtos.filter(item => item.id == id)
-  if (!produto) {
-    res.status(404).send("Produto não localizado.")
-    return
-  }
-  res.status(200).json(produto)
-})
-
-// Endpoint para atualizar um produto com base no ID.
-/**
- * @swagger
- * /produtos/{id}:
- *   put:
- *     summary: Atualiza um produto pelo ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID do item
- *         schema:
- *           type: integer
- *     requestBody:
- *       description: Dados a serem atualizados no produto
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               descricao:
- *                 type: string
- *     responses:
- *       200:
- *         description: OK
- */
-app.put("/produtos/:id", (req, res) => {
-  const {id} = req.params
-  const dataToUpdate = req.body
-  const index = produtos.findIndex(item => item.id == id)
-  if (index < 0) {
-    res.status(404).send("Produto não localizado.")
-    return
-  }
-  produtos[index] = {...produtos[index], ...dataToUpdate}
-  res.status(200).send("Produto atualizado.")
-})
-
-// Endpoint para excluir um produto com base no ID.
-/**
- * @swagger
- * /produtos/{id}:
- *   delete:
- *     summary: Exclui um produto pelo ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID do item
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: OK
- */
-app.delete("/produtos/:id", (req, res) => {
-  const {id} = req.params
-  const index = produtos.findIndex(item => item.id == id)
-  if(index < 0) {
-    res.status(404).send("Produto não localizado.")
-    return
-  }
-  produtos.splice(index, 1)
-  res.status(200).send("Produto excluído.")
-})
+//End Point's 
+app.use("/produtos", produtosRouter);
 
 // Iniciando o servidor na porta definida.
 app.listen(port, () => console.log(`Server listening on port ${port}`))
