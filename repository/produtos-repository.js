@@ -11,6 +11,7 @@ async function createProdutos(produto) {
     return await Produto.create({
       nome: produto.nome,
       preco: produto.preco,
+      img: produto.img,
     });
   } catch (error) {
     console.error("createProdutos: ", error);
