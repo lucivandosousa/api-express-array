@@ -2,7 +2,7 @@ const { Produto } = require("../models");
 
 async function getProdutos() {
   return await Produto.findAll({
-    attributes: ["id", "nome", "preco"],
+    attributes: ["id", "nome", "preco", "img"],
   });
 }
 
@@ -40,6 +40,7 @@ async function updatedProduto(id, update_produto) {
     await produto.update({
       nome: update_produto.nome,
       preco: update_produto.preco,
+      img: update_produto.img,
     });
 
     return 200;

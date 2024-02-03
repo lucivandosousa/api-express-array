@@ -122,7 +122,6 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const dataToUpdate = req.body;
-
   const new_produto = await updatedProduto(id, dataToUpdate);
 
   res.status(new_produto).send();

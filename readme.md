@@ -63,14 +63,28 @@ Para adicionar um novo produto, você pode enviar uma requisição POST com os d
 
 ### 4. Exemplo de comando de banco 
 
-
 Ele cria a entidade migration e modelo
-
 ```
 npx sequelize-cli model:generate --name Produto --attributes nome:string,preco:float
-
 ```
 Execulta todas as pendencias
 ```
 npx sequelize-cli db:migrate
 ```
+Adicionando um nova coluna
+````
+npx sequelize-cli migration:create --name produto_add_column_migration 
+````
+Removendo a ultima alteração 
+````
+npx sequelize-cli db:migrate:undo
+````
+````
+npx sequelize-cli db:migrate:undo:all --to XXXXXXXXXXXXXX-create-posts.js
+````
+ERRO - :
+````
+ERROR: Cannot delete property 'meta' of [object Array]
+Solução:
+npm install mariadb@2 --save
+````
