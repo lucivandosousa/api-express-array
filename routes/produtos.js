@@ -7,7 +7,6 @@ const {
   deleteProduto,
 } = require("../repository/produtos-repository");
 const router = express.Router();
-const { Produto } = require("../models");
 
 // Endpoint para adicionar um novo produto.
 /**
