@@ -1,15 +1,23 @@
 const express = require("express");
+const {
+  getUsuarios,
+  createUsuarios,
+  findUsuario,
+  updatedUsuario,
+  deleteUsuario,
+} = require("../repository/usuarios-repository");
+
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const usuarios = { nome: "chico" };
+  const usuarios = await getUsuarios();
   res.status(200).json(usuarios);
 });
 
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
+router.get("/find", async (req, res) => {
+  const { email } = req.body;
 
-  const usuario = { nome: "chico" };
+  const usuario = await findUsuario(email);
 
   if (!usuario) {
     res.status(404).send("usuario não localizado.");
@@ -21,35 +29,39 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const dataToInsert = req.body;
 
-  //   if (!dataToInsert.nome || !dataToInsert.preco) {
-  //     res.status(400).send("Nome ou preço do produto não foi informado(a).");
-  //     return;
-  //   }
-
-  const new_produto = {
-    id: 123456,
-    nome: dataToInsert.nome,
-    email: dataToInsert.email,
-  };
-
-  if (new_produto.id === undefined) {
-    res.status(500).send(new_produto);
+  if (!dataToInsert.nome || !dataToInsert.email) {
+    res.status(400).send("Nome ou preço do produto não foi informado(a).");
+    return;
   }
 
-  res.status(201).send(new_produto);
+  //Validar usuario existente
+  if ((await findUsuario(dataToInsert.email)) != null) {
+    res.status(400).send("Uusario já cadastrado!");
+    return;
+  }
+
+  const new_usuario = await createUsuarios(dataToInsert);
+
+  if (new_usuario.id === undefined) {
+    res.status(500).send(new_usuario);
+  }
+
+  res.status(201).send(new_usuario);
 });
 
-router.put("/:id", async (req, res) => {
-  const { id } = req.params;
+router.put("/", async (req, res) => {
   const dataToUpdate = req.body;
-  const new_usuario = 201;
+
+  const new_usuario = await updatedUsuario(dataToUpdate.email, dataToUpdate);
 
   res.status(new_usuario).send();
 });
 
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  const statusCode = 200; // retorna da função
+router.delete("/", async (req, res) => {
+  const dataToUpdate = req.body;
+  
+  const statusCode = await deleteUsuario(dataToUpdate.email); // retorna da função
+
   res.status(statusCode).send("Usuario excluído.");
 });
 
