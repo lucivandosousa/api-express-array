@@ -28,10 +28,6 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `https://api-express-array.vercel.app`,
-      description: 'Servidor de produção',
-    },
-    {
       url: `http://localhost:${port}`,
       description: 'Servidor local',
     }
