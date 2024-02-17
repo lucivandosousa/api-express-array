@@ -1,23 +1,28 @@
 const express = require("express");
 const router = express.Router();
 
+const {
+  getPedidos,
+  findPedido,
+} = require("../repository/pedidos-repository");
+
 // ADMIN
 router.get("/", async (req, res) => {
-  const pedidos = { VALIDA: "TODOS" };
+  const pedidos = await getPedidos();
   res.status(200).json(pedidos);
 });
 
 // 
 router.get("/:id", async (req, res) => {
-  const { email } = req.body;
+  const { id } = req.params;
 
-  const Pedido = { nome: "chico" };
+  const pedido = await findPedido(id);
 
-  if (!Pedido) {
-    res.status(404).send("Pedido não localizado.");
+  if (!pedido) {
+    res.status(404).send("Produto não localizado.");
     return;
   }
-  res.status(200).json(Pedido);
+  res.status(200).json(pedido);
 });
 
 router.post("/", async (req, res) => {

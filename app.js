@@ -20,6 +20,7 @@ app.use(cors());
 // Rotas
 const produtosRouter = require("./routes/produtos");
 const usuariosRouter = require("./routes/usuarios");
+const pedidosRouter = require("./routes/pedidos");
 
 //Adicionando os meu arquivos publicos
 app.use(express.static(path.join(__dirname, "/public")));
@@ -77,6 +78,8 @@ app.get("/", (req, res) => res.status(200).send("API express"));
 //End Point's
 app.use("/produtos", produtosRouter);
 app.use("/usuarios", usuariosRouter);
+app.use("/pedidos", pedidosRouter);
+
 
 // Iniciando o servidor na porta definida.
 app.listen(port, () => console.log(`Server listening on port ${port}`));
