@@ -2,17 +2,17 @@
   "development": {
     "username": "root",
     "password": "123456",
-    "database": "TesteCarrinhoCompra",
+    "database": "HML_CarrinhoCompra",
     "host": "127.0.0.1",
-    "port": "3399",
+    "port": "3333",
     "dialect": "mariadb"
   },
   "test": {
     "username": "root",
     "password": "123456",
-    "database": "TesteCarrinhoCompra",
+    "database": "HML_CarrinhoCompra",
     "host": "127.0.0.1",
-    "port": "3399",
+    "port": "3333",
     "dialect": "mariadb"
   },
   "production": {
