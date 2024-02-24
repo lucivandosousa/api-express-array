@@ -5,6 +5,7 @@ const {
   findUsuario,
   updatedUsuario,
   deleteUsuario,
+  carrinhos,
 } = require("../repository/usuarios-repository");
 
 const router = express.Router();
@@ -59,10 +60,22 @@ router.put("/", async (req, res) => {
 
 router.delete("/", async (req, res) => {
   const dataToUpdate = req.body;
-  
+
   const statusCode = await deleteUsuario(dataToUpdate.email); // retorna da função
 
   res.status(statusCode).send("Usuario excluído.");
+});
+
+router.get("/carrinhos", async (req, res) => {
+  const { email } = req.body;
+
+  const usuario = await carrinhos(email);
+
+  if (!usuario) {
+    res.status(404).send("carrinhos não localizado.");
+    return;
+  }
+  res.status(200).json(usuario);
 });
 
 module.exports = router;
