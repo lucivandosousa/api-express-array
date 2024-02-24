@@ -1,4 +1,5 @@
 const { Usuario } = require("../models");
+const { findUsuarioPedidos } = require("../repository/pedidos-repository");
 
 async function getUsuarios() {
   return await Usuario.findAll({
@@ -54,8 +55,7 @@ async function updatedUsuario(email, update_usuario) {
 
     return 200;
   } catch (error) {
-
-    console.error("updatedUsuario : ", error)
+    console.error("updatedUsuario : ", error);
     return 500;
   }
 }
@@ -73,9 +73,14 @@ async function deleteUsuario(email) {
 
     return 200;
   } catch (error) {
-    console.error("deleteUsuario : ", error)
+    console.error("deleteUsuario : ", error);
     return 500;
   }
+}
+
+async function carrinhos(email) {
+  const usuario = await findUsuario(email);
+  return await findUsuarioPedidos(usuario.id);
 }
 
 module.exports = {
@@ -84,4 +89,5 @@ module.exports = {
   findUsuario,
   updatedUsuario,
   deleteUsuario,
+  carrinhos,
 };
