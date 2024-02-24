@@ -66,10 +66,32 @@ async function deleteProduto(id) {
   }
 }
 
+async function validarProdutos(produtos) {
+  const produtosValidados = [];
+
+  for (let index = 0; index < produtos.length; index++) {
+    // logica se tem no estoque
+    const produtoAddPedido = produtos[index];
+    // validar produtos
+    const produto = await findProduto(produtoAddPedido.id);
+
+    const addProduto = produto.toJSON();
+
+    produtosValidados.push({
+      id_produto: addProduto.id,
+      quantidade: produtoAddPedido.qtd,
+      preco_unitario: addProduto.preco,
+    });
+  }
+
+  return produtosValidados;
+}
+
 module.exports = {
   getProdutos,
   createProdutos,
   findProduto,
   updatedProduto,
   deleteProduto,
+  validarProdutos,
 };

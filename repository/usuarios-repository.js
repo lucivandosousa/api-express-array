@@ -1,5 +1,9 @@
 const { Usuario } = require("../models");
-const { findUsuarioPedidos } = require("../repository/pedidos-repository");
+const {
+  findUsuarioPedidos,
+  createPedidos,
+} = require("../repository/pedidos-repository");
+const { validarProdutos } = require("../repository/produtos-repository");
 
 async function getUsuarios() {
   return await Usuario.findAll({
@@ -78,10 +82,33 @@ async function deleteUsuario(email) {
   }
 }
 
-async function carrinhos(email) {
+async function pedidos(email) {
   const usuario = await findUsuario(email);
-  return await findUsuarioPedidos(usuario.id);
+
+  const pedidos = await findUsuarioPedidos(usuario.id);
+
+  const usuarioPedidosProdutos = { ...usuario, pedidos };
+
+  return usuarioPedidosProdutos;
 }
+
+async function pedidosAddProdutos(email, produtos) {
+  const usuario = await findUsuario(email);
+  const itensAddPedidos = await validarProdutos(produtos);
+  //validar caso der erro
+  await createPedidos(usuario.id, itensAddPedidos);
+
+  // pedidos com os produtos criados
+  const pedidos = await findUsuarioPedidos(usuario.id);
+
+  // create pedidos
+  console.log("pedidosAddProdutos", pedidos);
+
+  return pedidos;
+}
+
+
+
 
 module.exports = {
   getUsuarios,
@@ -89,5 +116,6 @@ module.exports = {
   findUsuario,
   updatedUsuario,
   deleteUsuario,
-  carrinhos,
+  pedidos,
+  pedidosAddProdutos,
 };

@@ -1,5 +1,5 @@
 const { Pedido } = require("../models");
-const { Usuario } = require("../models");
+const { ItemPedido } = require("../models");
 
 async function getPedidos() {
   return await Pedido.findAll({
@@ -7,15 +7,25 @@ async function getPedidos() {
   });
 }
 
-async function createProdutos(produto) {
+async function createPedidos(idUsuario, produtos) {
   try {
-    return await Produto.create({
-      nome: produto.nome,
-      preco: produto.preco,
-      img: produto.img,
+    const novoPedido = await Pedido.create({
+      id_usuario: idUsuario,
+      status: "carrinho",
     });
+
+    for (let index = 0; index < produtos.length; index++) {
+      const produto = produtos[index];
+
+      await ItemPedido.create({
+        id_pedido: novoPedido.id,
+        id_produto: produto.id_produto,
+        quantidade: produto.quantidade,
+        preco_unitario: produto.preco_unitario,
+      });
+    }
   } catch (error) {
-    console.error("createProdutos: ", error);
+    console.error("createPedidos: ", error);
 
     // TODO:: trocar pelo status code
     return [
@@ -79,10 +89,16 @@ async function getAllItensPedidos(usuarioPedidos) {
   const pedidosCarrinho = [];
 
   for (let index = 0; index < usuarioPedidos.length; index++) {
-    const pedido = usuarioPedidos[index].toJSON();
-    pedidosCarrinho.push(pedido);
-  }
+    const pedido = usuarioPedidos[index];
 
+    // logica dos produtos
+    const itens = await pedido.getItens();
+    const itensCarrinho = await getItensCarrinho(itens);
+
+    const pedidoItens = { ...pedido.toJSON(), itensCarrinho };
+
+    pedidosCarrinho.push(pedidoItens);
+  }
 
   return pedidosCarrinho;
 }
@@ -130,4 +146,5 @@ module.exports = {
   // updatedProduto,
   // deleteProduto,
   findUsuarioPedidos,
+  createPedidos,
 };
