@@ -78,9 +78,14 @@ async function deleteUsuario(email) {
   }
 }
 
-async function carrinhos(email) {
+async function pedidos(email) {
   const usuario = await findUsuario(email);
-  return await findUsuarioPedidos(usuario.id);
+
+  const pedidos = await findUsuarioPedidos(usuario.id)
+
+  const usuarioPedidosProdutos = { ...usuario,  pedidos };
+
+  return usuarioPedidosProdutos;
 }
 
 module.exports = {
@@ -89,5 +94,5 @@ module.exports = {
   findUsuario,
   updatedUsuario,
   deleteUsuario,
-  carrinhos,
+  pedidos,
 };

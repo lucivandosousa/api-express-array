@@ -79,8 +79,15 @@ async function getAllItensPedidos(usuarioPedidos) {
   const pedidosCarrinho = [];
 
   for (let index = 0; index < usuarioPedidos.length; index++) {
-    const pedido = usuarioPedidos[index].toJSON();
-    pedidosCarrinho.push(pedido);
+    const pedido = usuarioPedidos[index]
+
+    // logica dos produtos
+    const itens = await pedido.getItens();
+    const itensCarrinho = await getItensCarrinho(itens);
+
+    const pedidoItens = {...pedido.toJSON(), itensCarrinho}
+
+    pedidosCarrinho.push(pedidoItens);
   }
 
 
