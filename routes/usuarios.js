@@ -6,6 +6,7 @@ const {
   updatedUsuario,
   deleteUsuario,
   pedidos,
+  pedidosAddProdutos
 } = require("../repository/usuarios-repository");
 
 const router = express.Router();
@@ -66,7 +67,9 @@ router.delete("/", async (req, res) => {
   res.status(statusCode).send("Usuario excluído.");
 });
 
+// CRUD de usuario Pedidos
 router.get("/pedidos", async (req, res) => {
+  //TODO::Usuario LOGADO
   const { email } = req.body;
 
   const usuario = await pedidos(email);
@@ -76,6 +79,20 @@ router.get("/pedidos", async (req, res) => {
     return;
   }
   res.status(200).json(usuario);
+});
+
+
+router.post("/pedidos", async (req, res) => {
+  //TODO::Usuario LOGADO
+  const { email, produtos } = req.body;
+
+  const usuarioPedidos = await pedidosAddProdutos(email, produtos);
+
+  if (!usuarioPedidos) {
+    res.status(404).send("pedidos não localizado.");
+    return;
+  }
+  res.status(200).json(usuarioPedidos[usuarioPedidos.length-1]);
 });
 
 module.exports = router;
