@@ -6,7 +6,7 @@ const {
   updatedUsuario,
   deleteUsuario,
   pedidos,
-  pedidosAddProdutos
+  pedidosAddProdutos,
 } = require("../repository/usuarios-repository");
 
 const router = express.Router();
@@ -74,6 +74,11 @@ router.get("/pedidos", async (req, res) => {
 
   const usuario = await pedidos(email);
 
+  if (usuario.statusCode != undefined) {
+    res.status(usuario.statusCode).send(usuario.message);
+    return;
+  }
+
   if (!usuario) {
     res.status(404).send("pedidos não localizado.");
     return;
@@ -81,18 +86,23 @@ router.get("/pedidos", async (req, res) => {
   res.status(200).json(usuario);
 });
 
-
 router.post("/pedidos", async (req, res) => {
   //TODO::Usuario LOGADO
   const { email, produtos } = req.body;
 
+  //Retornar um texto caso não tenha produtos
   const usuarioPedidos = await pedidosAddProdutos(email, produtos);
+
+  if (usuarioPedidos.statusCode != undefined) {
+    res.status(usuarioPedidos.statusCode).send(usuarioPedidos.message);
+    return;
+  }
 
   if (!usuarioPedidos) {
     res.status(404).send("pedidos não localizado.");
     return;
   }
-  res.status(200).json(usuarioPedidos[usuarioPedidos.length-1]);
+  res.status(200).json(usuarioPedidos[usuarioPedidos.length - 1]);
 });
 
 module.exports = router;

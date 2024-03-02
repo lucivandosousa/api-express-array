@@ -69,11 +69,22 @@ async function deleteProduto(id) {
 async function validarProdutos(produtos) {
   const produtosValidados = [];
 
+  // TODO:: Caso o estoque acabe avise
   for (let index = 0; index < produtos.length; index++) {
     // logica se tem no estoque
     const produtoAddPedido = produtos[index];
     // validar produtos
     const produto = await findProduto(produtoAddPedido.id);
+
+    if (produto === null) {
+      const erro = {
+        statusCode: 404,
+        message: `Produto não encontrado! ${produtoAddPedido.id}`
+      }
+
+      return erro
+    }
+
 
     const addProduto = produto.toJSON();
 

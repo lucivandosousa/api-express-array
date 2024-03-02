@@ -85,6 +85,15 @@ async function deleteUsuario(email) {
 async function pedidos(email) {
   const usuario = await findUsuario(email);
 
+  if ( usuario === null) {
+    const error = {
+      statusCode: 404,
+      message: "Usuário não encontrado!"
+    }
+    
+    return error;
+  }
+
   const pedidos = await findUsuarioPedidos(usuario.id);
 
   const usuarioPedidosProdutos = { ...usuario, pedidos };
@@ -94,7 +103,15 @@ async function pedidos(email) {
 
 async function pedidosAddProdutos(email, produtos) {
   const usuario = await findUsuario(email);
+
+  //TODO:: Validar itens do pedido 
   const itensAddPedidos = await validarProdutos(produtos);
+
+  if (itensAddPedidos.statusCode != undefined ) {
+    return itensAddPedidos;
+  }
+
+
   //validar caso der erro
   await createPedidos(usuario.id, itensAddPedidos);
 
@@ -106,8 +123,6 @@ async function pedidosAddProdutos(email, produtos) {
 
   return pedidos;
 }
-
-
 
 
 module.exports = {

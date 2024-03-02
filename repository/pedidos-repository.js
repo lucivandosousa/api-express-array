@@ -14,6 +14,12 @@ async function createPedidos(idUsuario, produtos) {
       status: "carrinho",
     });
 
+    // TODO:: Todos os itens dentro do carrinho.
+    // ItemPedido
+
+    // TODO:: Validar o que foi enviado
+    // produtos
+
     for (let index = 0; index < produtos.length; index++) {
       const produto = produtos[index];
 
@@ -41,10 +47,13 @@ async function findUsuarioPedidos(idUsuario) {
   const pedidos = await Pedido.findAll({
     where: {
       id_usuario: idUsuario,
+      status: "carrinho",
     },
   });
 
-  return await getAllItensPedidos(pedidos);
+  const new_pedidos = pedidos[pedidos.length - 1];
+
+  return await getAllItensPedidos(new_pedidos);
 }
 
 async function findPedido(id) {
@@ -85,66 +94,23 @@ async function getItensCarrinho(itensProdutos) {
   return itensCarrinho;
 }
 
-async function getAllItensPedidos(usuarioPedidos) {
+async function getAllItensPedidos(usuarioPedido) {
   const pedidosCarrinho = [];
 
-  for (let index = 0; index < usuarioPedidos.length; index++) {
-    const pedido = usuarioPedidos[index];
+  // logica dos produtos
+  const itens = await usuarioPedido.getItens();
+  const itensCarrinho = await getItensCarrinho(itens);
 
-    // logica dos produtos
-    const itens = await pedido.getItens();
-    const itensCarrinho = await getItensCarrinho(itens);
+  const pedidoItens = { ...usuarioPedido.toJSON(), itensCarrinho };
 
-    const pedidoItens = { ...pedido.toJSON(), itensCarrinho };
-
-    pedidosCarrinho.push(pedidoItens);
-  }
+  pedidosCarrinho.push(pedidoItens);
 
   return pedidosCarrinho;
 }
 
-// async function updatedProduto(id, update_produto) {
-//   try {
-//     const produto = await findProduto(id);
-
-//     if (!produto) {
-//       return 404;
-//     }
-
-//     await produto.update({
-//       nome: update_produto.nome,
-//       preco: update_produto.preco,
-//       img: update_produto.img,
-//     });
-
-//     return 200;
-//   } catch (error) {
-//     return 500;
-//   }
-// }
-
-// async function deleteProduto(id) {
-//   try {
-//     const produto = await Produto.findByPk(id);
-
-//     if (!produto) {
-//       return 404;
-//     }
-
-//     await produto.destroy();
-
-//     return 200;
-//   } catch (error) {
-//     return 500;
-//   }
-// }
-
 module.exports = {
   getPedidos,
-  // createProdutos,
   findPedido,
-  // updatedProduto,
-  // deleteProduto,
   findUsuarioPedidos,
   createPedidos,
 };
