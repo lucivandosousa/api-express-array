@@ -17,7 +17,6 @@ async function createPedidos(idUsuario, produtos) {
     // TODO:: Todos os itens dentro do carrinho.
     // ItemPedido
 
-
     // TODO:: Validar o que foi enviado
     // produtos
 
@@ -48,11 +47,13 @@ async function findUsuarioPedidos(idUsuario) {
   const pedidos = await Pedido.findAll({
     where: {
       id_usuario: idUsuario,
-      //TODO::Validar só os que estão com status carrinho
+      status: "carrinho",
     },
   });
 
-  return await getAllItensPedidos(pedidos);
+  const new_pedidos = pedidos[pedidos.length - 1];
+
+  return await getAllItensPedidos(new_pedidos);
 }
 
 async function findPedido(id) {
@@ -93,20 +94,16 @@ async function getItensCarrinho(itensProdutos) {
   return itensCarrinho;
 }
 
-async function getAllItensPedidos(usuarioPedidos) {
+async function getAllItensPedidos(usuarioPedido) {
   const pedidosCarrinho = [];
 
-  for (let index = 0; index < usuarioPedidos.length; index++) {
-    const pedido = usuarioPedidos[index];
+  // logica dos produtos
+  const itens = await usuarioPedido.getItens();
+  const itensCarrinho = await getItensCarrinho(itens);
 
-    // logica dos produtos
-    const itens = await pedido.getItens();
-    const itensCarrinho = await getItensCarrinho(itens);
+  const pedidoItens = { ...usuarioPedido.toJSON(), itensCarrinho };
 
-    const pedidoItens = { ...pedido.toJSON(), itensCarrinho };
-
-    pedidosCarrinho.push(pedidoItens);
-  }
+  pedidosCarrinho.push(pedidoItens);
 
   return pedidosCarrinho;
 }

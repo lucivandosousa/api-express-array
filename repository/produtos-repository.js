@@ -76,6 +76,16 @@ async function validarProdutos(produtos) {
     // validar produtos
     const produto = await findProduto(produtoAddPedido.id);
 
+    if (produto === null) {
+      const erro = {
+        statusCode: 404,
+        message: `Produto não encontrado! ${produtoAddPedido.id}`
+      }
+
+      return erro
+    }
+
+
     const addProduto = produto.toJSON();
 
     produtosValidados.push({
