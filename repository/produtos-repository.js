@@ -69,6 +69,7 @@ async function deleteProduto(id) {
 async function validarProdutos(produtos) {
   const produtosValidados = [];
 
+  // TODO:: Caso o estoque acabe avise
   for (let index = 0; index < produtos.length; index++) {
     // logica se tem no estoque
     const produtoAddPedido = produtos[index];

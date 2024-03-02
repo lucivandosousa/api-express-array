@@ -14,6 +14,13 @@ async function createPedidos(idUsuario, produtos) {
       status: "carrinho",
     });
 
+    // TODO:: Todos os itens dentro do carrinho.
+    // ItemPedido
+
+
+    // TODO:: Validar o que foi enviado
+    // produtos
+
     for (let index = 0; index < produtos.length; index++) {
       const produto = produtos[index];
 
@@ -41,6 +48,7 @@ async function findUsuarioPedidos(idUsuario) {
   const pedidos = await Pedido.findAll({
     where: {
       id_usuario: idUsuario,
+      //TODO::Validar só os que estão com status carrinho
     },
   });
 
@@ -103,48 +111,9 @@ async function getAllItensPedidos(usuarioPedidos) {
   return pedidosCarrinho;
 }
 
-// async function updatedProduto(id, update_produto) {
-//   try {
-//     const produto = await findProduto(id);
-
-//     if (!produto) {
-//       return 404;
-//     }
-
-//     await produto.update({
-//       nome: update_produto.nome,
-//       preco: update_produto.preco,
-//       img: update_produto.img,
-//     });
-
-//     return 200;
-//   } catch (error) {
-//     return 500;
-//   }
-// }
-
-// async function deleteProduto(id) {
-//   try {
-//     const produto = await Produto.findByPk(id);
-
-//     if (!produto) {
-//       return 404;
-//     }
-
-//     await produto.destroy();
-
-//     return 200;
-//   } catch (error) {
-//     return 500;
-//   }
-// }
-
 module.exports = {
   getPedidos,
-  // createProdutos,
   findPedido,
-  // updatedProduto,
-  // deleteProduto,
   findUsuarioPedidos,
   createPedidos,
 };

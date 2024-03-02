@@ -84,7 +84,8 @@ async function deleteUsuario(email) {
 
 async function pedidos(email) {
   const usuario = await findUsuario(email);
-
+  
+  // TODO:: Só uma consulta por carrinho
   const pedidos = await findUsuarioPedidos(usuario.id);
 
   const usuarioPedidosProdutos = { ...usuario, pedidos };

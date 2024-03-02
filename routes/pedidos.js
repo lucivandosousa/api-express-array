@@ -28,11 +28,10 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const dataToInsert = req.body;
 
-  //   if (!dataToInsert.nome || !dataToInsert.preco) {
-  //     res.status(400).send("Nome ou preço do produto não foi informado(a).");
-  //     return;
-  //   }
-
+  /* TODO: Adicionar só um item no carrinho
+   * Pega o id do usuario, o item que vai add
+   * Se não crie um novo pedido.
+  */
   const new_pedido = {
     id: 123456,
     email: dataToInsert.email,

@@ -86,6 +86,8 @@ router.post("/pedidos", async (req, res) => {
   //TODO::Usuario LOGADO
   const { email, produtos } = req.body;
 
+
+  // TODO:: retornar um texto caso não tenha produtos
   const usuarioPedidos = await pedidosAddProdutos(email, produtos);
 
   if (!usuarioPedidos) {
