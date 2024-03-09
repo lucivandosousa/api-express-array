@@ -20,47 +20,10 @@ async function createPedidos(idUsuario, produtos) {
 
     if (validar_pedidos === undefined) {
       // Criar
-      pedidos_usuarios = await Pedido.create({
-        id_usuario: idUsuario,
-        status: "carrinho",
-      });
-
-      for (let index = 0; index < produtos.length; index++) {
-        const produto = produtos[index];
-        await createItemPedidos(pedidos_usuarios.id, produto);
-      }
+      await createItensPedidos(idUsuario, produtos);
     } else {
       // Atualizar
-      pedidos_usuarios = validar_pedidos;
-
-      const valid = produtos.length === 0 ? null : 0;
-
-      await deleteItemPedidos(pedidos_usuarios.id, valid);
-
-      for (let index = 0; index < produtos.length; index++) {
-        const produto = produtos[index];
-
-        // validar o pedido
-        // validar os itens do pedidos
-        // atualizar a quantidade
-        // se quantidade for 0 ou não tiver na lista remover do carrinho
-        const validarItensPedidos = await getItemPedido(
-          pedidos_usuarios.id,
-          produto.id_produto
-        );
-        
-        if (validarItensPedidos === undefined) {
-          //create
-          await createItemPedidos(pedidos_usuarios.id, produto);
-        } else {
-          // update
-          await updateItemPedidos(
-            pedidos_usuarios.id,
-            produto.id_produto,
-            produto.quantidade
-          );
-        }
-      }
+      await updateItensPedidos(idUsuario, produtos);
     }
   } catch (error) {
     console.error("createPedidos: ", error);
@@ -122,6 +85,9 @@ async function getItensCarrinho(itensProdutos) {
 async function getAllItensPedidos(usuarioPedido) {
   const pedidosCarrinho = [];
 
+  if (usuarioPedido === undefined) {
+    return [];
+  }
   // logica dos produtos
   const itens = await usuarioPedido.getItens();
   const itensCarrinho = await getItensCarrinho(itens);
@@ -144,9 +110,51 @@ async function getUserCarrinho(idUsuario) {
   return pedidos[pedidos.length - 1];
 }
 
+async function createItensPedidos(idUsuario, produtos) {
+  pedidos_usuarios = await Pedido.create({
+    id_usuario: idUsuario,
+    status: "carrinho",
+  });
+
+  for (let index = 0; index < produtos.length; index++) {
+    const produto = produtos[index];
+    await createItemPedidos(pedidos_usuarios.id, produto);
+  }
+}
+
+async function updateItensPedidos(idUsuario, produtos) {
+  pedidos_usuarios = await getUserCarrinho(idUsuario);
+
+  await deleteItemPedidos(pedidos_usuarios.id, null);
+
+  for (let index = 0; index < produtos.length; index++) {
+    const produto = produtos[index];
+    await createItemPedidos(pedidos_usuarios.id, produto);
+  }
+}
+
+async function updatePedidos(idUsuario) {
+  try {
+    const pedidos_usuarios = await getUserCarrinho(idUsuario);
+
+    if (!pedidos_usuarios) {
+      return 404;
+    }
+
+    await pedidos_usuarios.update({
+      status: "pago",
+    });
+
+    return 200;
+  } catch (error) {
+    return 500;
+  }
+}
+
 module.exports = {
   getPedidos,
   findPedido,
   findUsuarioPedidos,
   createPedidos,
+  updatePedidos,
 };

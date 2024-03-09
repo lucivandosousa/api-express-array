@@ -54,6 +54,8 @@ async function deleteItemPedidos(id_pedido, id_produto) {
       const itemProduto = result_item_pedido[index];
       await itemProduto.destroy();
     }
+
+    return [];
   } else {
     result_item_pedido = await getItemPedido(id_pedido, id_produto);
   }

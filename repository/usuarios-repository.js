@@ -2,6 +2,7 @@ const { Usuario } = require("../models");
 const {
   findUsuarioPedidos,
   createPedidos,
+  updatePedidos,
 } = require("../repository/pedidos-repository");
 const { validarProdutos } = require("../repository/produtos-repository");
 
@@ -85,12 +86,12 @@ async function deleteUsuario(email) {
 async function pedidos(email) {
   const usuario = await findUsuario(email);
 
-  if ( usuario === null) {
+  if (usuario === null) {
     const error = {
       statusCode: 404,
-      message: "Usuário não encontrado!"
-    }
-    
+      message: "Usuário não encontrado!",
+    };
+
     return error;
   }
 
@@ -104,13 +105,12 @@ async function pedidos(email) {
 async function pedidosAddProdutos(email, produtos) {
   const usuario = await findUsuario(email);
 
-  //TODO:: Validar itens do pedido 
+  //TODO:: Validar itens do pedido
   const itensAddPedidos = await validarProdutos(produtos);
 
-  if (itensAddPedidos.statusCode != undefined ) {
+  if (itensAddPedidos.statusCode != undefined) {
     return itensAddPedidos;
   }
-
 
   //validar caso der erro
   await createPedidos(usuario.id, itensAddPedidos);
@@ -124,6 +124,25 @@ async function pedidosAddProdutos(email, produtos) {
   return pedidos;
 }
 
+async function pagamento(email) {
+  const usuario = await findUsuario(email);
+
+  if (usuario === null) {
+    const error = {
+      statusCode: 404,
+      message: "Usuário não encontrado!",
+    };
+
+    return error;
+  }
+  
+  await updatePedidos(usuario.id);
+
+  return {
+    statusCode: 200,
+    message: "Pagamento realizado com sucesso!",
+  };
+}
 
 module.exports = {
   getUsuarios,
@@ -133,4 +152,5 @@ module.exports = {
   deleteUsuario,
   pedidos,
   pedidosAddProdutos,
+  pagamento
 };

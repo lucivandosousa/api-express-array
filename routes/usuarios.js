@@ -7,6 +7,7 @@ const {
   deleteUsuario,
   pedidos,
   pedidosAddProdutos,
+  pagamento,
 } = require("../repository/usuarios-repository");
 
 const router = express.Router();
@@ -100,6 +101,25 @@ router.post("/pedidos", async (req, res) => {
 
   if (!usuarioPedidos) {
     res.status(404).send("pedidos não localizado.");
+    return;
+  }
+  res.status(200).json(usuarioPedidos[usuarioPedidos.length - 1]);
+});
+
+router.post("/pagamento", async (req, res) => {
+  //TODO::Usuario LOGADO
+  const { email } = req.body;
+
+  //Retornar um texto caso não tenha carrinho
+  const usuarioPedidos = await pagamento(email);
+
+  if (usuarioPedidos.statusCode != undefined) {
+    res.status(usuarioPedidos.statusCode).send(usuarioPedidos.message);
+    return;
+  }
+
+  if (!usuarioPedidos) {
+    res.status(404).send("carrinho não localizado.");
     return;
   }
   res.status(200).json(usuarioPedidos[usuarioPedidos.length - 1]);
