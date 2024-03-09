@@ -9,26 +9,63 @@ async function getPedidos() {
 
 async function createPedidos(idUsuario, produtos) {
   try {
-    const novoPedido = await Pedido.create({
-      id_usuario: idUsuario,
-      status: "carrinho",
-    });
+    let pedidos_usuarios = {};
 
-    // TODO:: Todos os itens dentro do carrinho.
-    // ItemPedido
+    const validar_pedidos = await getUserCarrinho(idUsuario);
 
-    // TODO:: Validar o que foi enviado
-    // produtos
-
-    for (let index = 0; index < produtos.length; index++) {
-      const produto = produtos[index];
-
-      await ItemPedido.create({
-        id_pedido: novoPedido.id,
-        id_produto: produto.id_produto,
-        quantidade: produto.quantidade,
-        preco_unitario: produto.preco_unitario,
+    if (validar_pedidos === undefined) {
+      // Criar
+      pedidos_usuarios = await Pedido.create({
+        id_usuario: idUsuario,
+        status: "carrinho",
       });
+
+      for (let index = 0; index < produtos.length; index++) {
+        const produto = produtos[index];
+
+        await ItemPedido.create({
+          id_pedido: pedidos_usuarios.id,
+          id_produto: produto.id_produto,
+          quantidade: produto.quantidade,
+          preco_unitario: produto.preco_unitario,
+        });
+      }
+    } else {
+      // Atualizar
+      pedidos_usuarios = validar_pedidos;
+
+      for (let index = 0; index < produtos.length; index++) {
+        const produto = produtos[index];
+
+        // validar o pedido
+        // validar os itens do pedidos
+        // atualizar a quantidade
+        // se quantidade for 0 ou não tiver na lista remover do carrinho
+
+        const validarItensPedidos = await ItemPedido.findAll({
+          where: {
+            id_pedido: pedidos_usuarios.id,
+            id_produto: produto.id_produto,
+          },
+        });
+
+        if (validarItensPedidos.length === 0) {
+          //create
+          await ItemPedido.create({
+            id_pedido: pedidos_usuarios.id,
+            id_produto: produto.id_produto,
+            quantidade: produto.quantidade,
+            preco_unitario: produto.preco_unitario,
+          });
+        } else {
+          // update
+          const atualizar_itens = validarItensPedidos[0];
+          await atualizar_itens.update({
+            quantidade: produto.quantidade,
+          });
+        }
+      }
+
     }
   } catch (error) {
     console.error("createPedidos: ", error);
@@ -44,14 +81,7 @@ async function createPedidos(idUsuario, produtos) {
 }
 
 async function findUsuarioPedidos(idUsuario) {
-  const pedidos = await Pedido.findAll({
-    where: {
-      id_usuario: idUsuario,
-      status: "carrinho",
-    },
-  });
-
-  const new_pedidos = pedidos[pedidos.length - 1];
+  const new_pedidos = await getUserCarrinho(idUsuario);
 
   return await getAllItensPedidos(new_pedidos);
 }
@@ -106,6 +136,17 @@ async function getAllItensPedidos(usuarioPedido) {
   pedidosCarrinho.push(pedidoItens);
 
   return pedidosCarrinho;
+}
+
+async function getUserCarrinho(idUsuario) {
+  const pedidos = await Pedido.findAll({
+    where: {
+      id_usuario: idUsuario,
+      status: "carrinho",
+    },
+  });
+
+  return pedidos[pedidos.length - 1];
 }
 
 module.exports = {
