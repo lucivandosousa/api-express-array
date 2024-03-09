@@ -1,5 +1,9 @@
 const { Pedido } = require("../models");
-const { ItemPedido } = require("../models");
+const {
+  createItemPedidos,
+  getItemPedido,
+  updateItemPedidos,
+} = require("../repository/itempedido-repository");
 
 async function getPedidos() {
   return await Pedido.findAll({
@@ -22,13 +26,7 @@ async function createPedidos(idUsuario, produtos) {
 
       for (let index = 0; index < produtos.length; index++) {
         const produto = produtos[index];
-
-        await ItemPedido.create({
-          id_pedido: pedidos_usuarios.id,
-          id_produto: produto.id_produto,
-          quantidade: produto.quantidade,
-          preco_unitario: produto.preco_unitario,
-        });
+        await createItemPedidos(pedidos_usuarios.id, produto);
       }
     } else {
       // Atualizar
@@ -41,31 +39,23 @@ async function createPedidos(idUsuario, produtos) {
         // validar os itens do pedidos
         // atualizar a quantidade
         // se quantidade for 0 ou não tiver na lista remover do carrinho
-
-        const validarItensPedidos = await ItemPedido.findAll({
-          where: {
-            id_pedido: pedidos_usuarios.id,
-            id_produto: produto.id_produto,
-          },
-        });
+        const validarItensPedidos = await getItemPedido(
+          pedidos_usuarios.id,
+          produto.id_produto
+        );
 
         if (validarItensPedidos.length === 0) {
           //create
-          await ItemPedido.create({
-            id_pedido: pedidos_usuarios.id,
-            id_produto: produto.id_produto,
-            quantidade: produto.quantidade,
-            preco_unitario: produto.preco_unitario,
-          });
+          await createItemPedidos(pedidos_usuarios.id, produto);
         } else {
           // update
-          const atualizar_itens = validarItensPedidos[0];
-          await atualizar_itens.update({
-            quantidade: produto.quantidade,
-          });
+          await updateItemPedidos(
+            pedidos_usuarios.id,
+            produto.id_produto,
+            produto.quantidade
+          );
         }
       }
-
     }
   } catch (error) {
     console.error("createPedidos: ", error);
