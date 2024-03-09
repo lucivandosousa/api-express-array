@@ -3,6 +3,7 @@ const {
   createItemPedidos,
   getItemPedido,
   updateItemPedidos,
+  deleteItemPedidos,
 } = require("../repository/itempedido-repository");
 
 async function getPedidos() {
@@ -32,6 +33,10 @@ async function createPedidos(idUsuario, produtos) {
       // Atualizar
       pedidos_usuarios = validar_pedidos;
 
+      const valid = produtos.length === 0 ? null : 0;
+
+      await deleteItemPedidos(pedidos_usuarios.id, valid);
+
       for (let index = 0; index < produtos.length; index++) {
         const produto = produtos[index];
 
@@ -43,8 +48,8 @@ async function createPedidos(idUsuario, produtos) {
           pedidos_usuarios.id,
           produto.id_produto
         );
-
-        if (validarItensPedidos.length === 0) {
+        
+        if (validarItensPedidos === undefined) {
           //create
           await createItemPedidos(pedidos_usuarios.id, produto);
         } else {
