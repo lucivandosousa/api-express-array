@@ -5,6 +5,7 @@ const {
   findProduto,
   updatedProduto,
   deleteProduto,
+  getSearchProdutos
 } = require("../repository/produtos-repository");
 const router = express.Router();
 
@@ -58,8 +59,15 @@ router.post("/", async (req, res) => {
  *         description: OK
  */
 router.get("/", async (req, res) => {
-  const produtos = await getProdutos();
-  res.status(200).json(produtos);
+  const dataToInsert = req.body;
+
+  if (dataToInsert.search != undefined) {
+    const produtos = await getSearchProdutos(dataToInsert.search);
+    res.status(200).json(produtos);
+  } else {
+    const produtos = await getProdutos();
+    res.status(200).json(produtos);
+  }
 });
 
 // Endpoint para listar um produto com base no ID.
