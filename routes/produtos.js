@@ -5,7 +5,7 @@ const {
   findProduto,
   updatedProduto,
   deleteProduto,
-  getSearchProdutos
+  getSearchProdutos,
 } = require("../repository/produtos-repository");
 const router = express.Router();
 
@@ -59,15 +59,8 @@ router.post("/", async (req, res) => {
  *         description: OK
  */
 router.get("/", async (req, res) => {
-  const dataToInsert = req.body;
-
-  if (dataToInsert.search != undefined) {
-    const produtos = await getSearchProdutos(dataToInsert.search);
-    res.status(200).json(produtos);
-  } else {
-    const produtos = await getProdutos();
-    res.status(200).json(produtos);
-  }
+  const produtos = await getProdutos();
+  res.status(200).json(produtos);
 });
 
 // Endpoint para listar um produto com base no ID.
@@ -87,10 +80,15 @@ router.get("/", async (req, res) => {
  *       200:
  *         description: OK
  */
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
+router.get("/search/", async (req, res) => {
+  const { id, search } = req.query;
+  let produto;
 
-  const produto = await findProduto(id);
+  if (search != undefined) {
+    produto= await getSearchProdutos(search);
+  } else {
+    produto = await findProduto(id);
+  }
 
   if (!produto) {
     res.status(404).send("Produto não localizado.");
