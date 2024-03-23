@@ -35,12 +35,17 @@ async function createUsuarios(usuario) {
   }
 }
 
-async function findUsuario(email) {
+async function findUsuario(email, add_coluna) {
+  const colunas_tabela = ["id", "nome", "email"];
+  if (add_coluna != undefined) {
+    colunas_tabela.push(add_coluna);
+  }
+
   const resultado = await Usuario.findAll({
     where: {
       email: email,
     },
-    attributes: ["id", "nome", "email"],
+    attributes: colunas_tabela,
   });
 
   if (resultado[0] === undefined) {

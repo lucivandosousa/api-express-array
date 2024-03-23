@@ -10,7 +10,7 @@ const encoded = async (password) => {
 };
 
 const compared = async (password, valid_password) => {
-  return bcrypt.compareSync(myPlaintextPassword, exemplo_db);
+  return bcrypt.compareSync(password, valid_password);
 };
 
 module.exports = {

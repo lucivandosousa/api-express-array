@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(cors());
 
 // Rotas
+const auth = require("./routes/auth")
 const produtosRouter = require("./routes/produtos");
 const usuariosRouter = require("./routes/usuarios");
 const pedidosRouter = require("./routes/pedidos");
@@ -73,8 +74,9 @@ app.get("/versao-valid", (req, res) => {
  *       201:
  *         description: OK
  */
-app.get("/", (req, res) => res.status(200).send("API express"));
+app.use("/", auth);
 
+// (req, res) => res.status(200).send("API express")
 //End Point's
 app.use("/produtos", produtosRouter);
 app.use("/usuarios", usuariosRouter);
