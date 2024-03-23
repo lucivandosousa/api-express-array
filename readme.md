@@ -72,7 +72,8 @@ npx sequelize-cli db:migrate
 ```
 Adicionando um nova coluna
 ````
-npx sequelize-cli migration:create --name produto_add_column_migration 
+npx sequelize-cli migration:create --name produto_add_column_migration
+npx sequelize-cli migration:create --name usuario_add_column_password_migration 
 ````
 Removendo a ultima alteração 
 ````
