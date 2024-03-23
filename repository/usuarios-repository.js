@@ -6,6 +6,8 @@ const {
 } = require("../repository/pedidos-repository");
 const { validarProdutos } = require("../repository/produtos-repository");
 
+const { encoded } = require("../helps/criptografar");
+
 async function getUsuarios() {
   return await Usuario.findAll({
     attributes: ["id", "nome", "email"],
@@ -15,9 +17,12 @@ async function getUsuarios() {
 async function createUsuarios(usuario) {
   try {
     // Confirmação de E-MAIL
+    const new_senha = await encoded(usuario.senha);
+
     return await Usuario.create({
       nome: usuario.nome,
       email: usuario.email,
+      password: new_senha,
     });
   } catch (error) {
     // TODO:: trocar pelo status code
@@ -30,12 +35,17 @@ async function createUsuarios(usuario) {
   }
 }
 
-async function findUsuario(email) {
+async function findUsuario(email, add_coluna) {
+  const colunas_tabela = ["id", "nome", "email"];
+  if (add_coluna != undefined) {
+    colunas_tabela.push(add_coluna);
+  }
+
   const resultado = await Usuario.findAll({
     where: {
       email: email,
     },
-    attributes: ["id", "nome", "email"],
+    attributes: colunas_tabela,
   });
 
   if (resultado[0] === undefined) {
@@ -135,7 +145,7 @@ async function pagamento(email) {
 
     return error;
   }
-  
+
   await updatePedidos(usuario.id);
 
   return {
@@ -152,5 +162,5 @@ module.exports = {
   deleteUsuario,
   pedidos,
   pedidosAddProdutos,
-  pagamento
+  pagamento,
 };

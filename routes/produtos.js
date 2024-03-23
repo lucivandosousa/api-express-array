@@ -5,6 +5,7 @@ const {
   findProduto,
   updatedProduto,
   deleteProduto,
+  getSearchProdutos,
 } = require("../repository/produtos-repository");
 const router = express.Router();
 
@@ -79,10 +80,15 @@ router.get("/", async (req, res) => {
  *       200:
  *         description: OK
  */
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
+router.get("/search/", async (req, res) => {
+  const { id, search } = req.query;
+  let produto;
 
-  const produto = await findProduto(id);
+  if (search != undefined) {
+    produto= await getSearchProdutos(search);
+  } else {
+    produto = await findProduto(id);
+  }
 
   if (!produto) {
     res.status(404).send("Produto não localizado.");

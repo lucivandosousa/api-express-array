@@ -1,7 +1,19 @@
 const { Produto } = require("../models");
+const {
+  Op
+} = require('sequelize');
 
 async function getProdutos() {
   return await Produto.findAll({
+    attributes: ["id", "nome", "preco", "img"],
+  });
+}
+
+async function getSearchProdutos(search) {
+  return await Produto.findAll({
+    where: {
+      nome: { [Op.like]: `%${search}%` },
+    },
     attributes: ["id", "nome", "preco", "img"],
   });
 }
@@ -79,12 +91,11 @@ async function validarProdutos(produtos) {
     if (produto === null) {
       const erro = {
         statusCode: 404,
-        message: `Produto não encontrado! ${produtoAddPedido.id}`
-      }
+        message: `Produto não encontrado! ${produtoAddPedido.id}`,
+      };
 
-      return erro
+      return erro;
     }
-
 
     const addProduto = produto.toJSON();
 
@@ -105,4 +116,5 @@ module.exports = {
   updatedProduto,
   deleteProduto,
   validarProdutos,
+  getSearchProdutos,
 };

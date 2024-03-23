@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
   res.status(200).json(usuarios);
 });
 
-router.get("/find", async (req, res) => {
+router.post("/find", async (req, res) => {
   const { email } = req.body;
 
   const usuario = await findUsuario(email);
@@ -43,6 +43,7 @@ router.post("/", async (req, res) => {
     return;
   }
 
+  // Trocar o json do usuario pelo token JTW
   const new_usuario = await createUsuarios(dataToInsert);
 
   if (new_usuario.id === undefined) {
